@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Mark order shipped | Roshy</title>
+<link rel="icon" href="/images/favicon.png" type="image/png">
+<link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+<main class="container" style="max-width:560px;padding-top:48px;padding-bottom:80px">
+  <a class="logo" href="/"><img src="/images/logo.png" alt="Roshy" width="360" height="208"></a>
+  <h1 style="font-size:2rem;margin-top:24px">Mark order shipped<br><span style="font-size:1.4rem;color:var(--muted)">标记订单已发货</span></h1>
+  <p style="color:var(--muted)">The customer gets an email with the tracking link. 客户将收到包含物流链接的邮件。</p>
+  <form class="form" id="ship-form" style="margin:24px 0 0">
+    <label>Password 密码<input type="password" name="password" required autocomplete="current-password"></label>
+    <label>Order number 订单号<input type="text" name="ref" required placeholder="RS-261029-K7QM" autocapitalize="characters" spellcheck="false"></label>
+    <label>Carrier 物流公司
+      <select name="carrier">
+        <option>YunExpress</option><option>4PX</option><option>Yanwen</option><option>Cainiao</option>
+        <option>China Post</option><option>EMS</option><option>DHL</option><option>An Post</option><option>Other</option>
+      </select>
+    </label>
+    <label>Tracking number 物流单号<input type="text" name="number" required spellcheck="false"></label>
+    <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" name="resend" value="1"> Send again if already shipped 已发货也重新发送</label>
+    <button class="btn" type="submit">Send tracking 发送物流信息</button>
+    <p class="form-status" aria-live="polite"></p>
+  </form>
+</main>
+<script>
+const form = document.getElementById("ship-form");
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const status = form.querySelector(".form-status");
+  const btn = form.querySelector("button");
+  const d = Object.fromEntries(new FormData(form).entries());
+  d.resend = !!d.resend;
+  btn.disabled = true; status.className = "form-status"; status.textContent = "Sending… 发送中…";
+  try {
+    const res = await fetch("/api/ship", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(d) });
+    const out = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(out.error || "Error");
+    status.className = "form-status ok"; status.textContent = out.message;
+    form.ref.value = ""; form.number.value = ""; form.resend.checked = false;
+  } catch (err) {
+    status.className = "form-status err"; status.textContent = err.message;
+  } finally { btn.disabled = false; }
+});
+</script>
+</body>
+</html>

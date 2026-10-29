@@ -1,0 +1,11 @@
+# Old Shopify addresses -> new pages (keeps Google links and old bookmarks working)
+/collections/all            /products/magnetic-lashes  301
+/collections/*              /products/magnetic-lashes  301
+/collections/all/products/magnetic-lashes  /products/magnetic-lashes  301
+/products/magnetic-lashes.json  /products/magnetic-lashes  301
+/cart                       /#cart                     302
+/account                    /                          302
+/account/*                  /                          302
+/blogs/*                    /                          301
+/pages/contact-us           /pages/contact             301
+/search                     /                          302
