@@ -37,7 +37,7 @@ lib/                        ← helpers for the above (no need to touch)
    - `policies/shipping-policy.html`: dispatch and delivery times
    - `policies/refund-policy.html`, `terms-of-service.html`, `privacy-policy.html`: your business name and postal address. EU consumer law requires a trader's address on the site.
 3. **Shipping fees:** in `store-config.js`, set `fee` for Ireland and worldwide to what you charge on Shopify today (I used €3.99 and €7.99 as placeholders). The free-shipping thresholds are already set to €30 and €45.
-4. **Contact email:** the policies use `hello@roshyshop.com`. Step 7 shows how to forward it to your normal inbox for free, or you can replace it with your own address.
+4. **Contact email:** the policies use `roshy.shop33@gmail.com`. To switch to an address on roshyshop.com later, replace it in the three policy pages.
 
 ---
 
