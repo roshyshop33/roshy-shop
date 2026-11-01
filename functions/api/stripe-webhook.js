@@ -5,7 +5,7 @@ import { handleEvent } from "../../lib/webhook.js";
 
 export async function onRequestPost({ request, env }) {
   const payload = await request.text();
-  const ok = await verifyStripeSignature(payload, request.headers.get("stripe-signature"), env.STRIPE_WEBHOOK_SECRET);
+  const ok = await verifyStripeSignature(payload, request.headers.get("stripe-signature"), (env.STRIPE_WEBHOOK_SECRET || "").trim());
   if (!ok) return json({ error: "Bad signature" }, 400);
 
   let event;

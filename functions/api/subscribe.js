@@ -15,7 +15,7 @@ export async function onRequestPost({ request, env }) {
   if (env.RESEND_AUDIENCE_ID) {
     const res = await fetch(`https://api.resend.com/audiences/${env.RESEND_AUDIENCE_ID}/contacts`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" },
+      headers: { Authorization: `Bearer ${env.RESEND_API_KEY.trim()}`, "Content-Type": "application/json" },
       body: JSON.stringify({ email, unsubscribed: false }),
     }).catch(() => null);
     saved = !!res?.ok;
