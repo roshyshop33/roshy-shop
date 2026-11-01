@@ -10,7 +10,8 @@ export async function onRequestPost({ request, env }) {
   let d;
   try { d = await request.json(); } catch { return json({ error: "Invalid request." }, 400); }
 
-  if (!env.ADMIN_PASSWORD || !timingSafeEqual(String(d.password || ""), env.ADMIN_PASSWORD)) {
+  const adminPassword = String(env.ADMIN_PASSWORD || "").trim();
+  if (!adminPassword || !timingSafeEqual(String(d.password || "").trim(), adminPassword)) {
     await new Promise((r) => setTimeout(r, 800));
     return json({ error: "Wrong password. 密码错误。" }, 401);
   }
