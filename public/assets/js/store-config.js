@@ -15,27 +15,41 @@ export const STORE = {
   pricesIncludeTax: true,   // shows "Tax included." under prices
 
   // ---- Shipping ------------------------------------------------------
-  // Customers pick "Ireland" or "Another country" in the cart.
-  // fee = what they pay below the free-shipping threshold.
-  // ⚠️ CHECK THESE TWO FEES — copy what you charge on Shopify today
-  //    (Shopify Admin → Settings → Shipping and delivery).
+  // Customers pick their zone in the cart: "Ireland", "Europe & UK" or
+  // "Rest of world". Checkout then only accepts addresses in that zone.
+  // fee = what they pay below the free-shipping threshold (the lashes'
+  // price, not counting shipping). Northern Ireland counts as the UK.
   shipping: {
     IE: {
       label: "Ireland",
       checkoutName: "Standard delivery (Ireland)",
-      fee: 3.99,
+      fee: 3.8,
       freeOver: 30,
     },
+    EUROPE: {
+      label: "Europe & UK",
+      checkoutName: "Tracked delivery (Europe & UK)",
+      fee: 4.5,
+      freeOver: 45,
+    },
     WORLD: {
-      label: "Another country",
+      label: "Rest of world",
       checkoutName: "International delivery",
-      fee: 7.99,
+      fee: 12,
       freeOver: 45,
     },
   },
 
-  // Countries Stripe will accept a shipping address for (besides Ireland).
-  // Remove any country you don't want to ship to.
+  // Countries in the "Europe & UK" zone (Ireland has its own zone).
+  europeCountries: [
+    "AD","AL","AT","AX","BA","BE","BG","CH","CY","CZ","DE","DK","EE","ES","FI","FO","FR",
+    "GB","GG","GI","GR","HR","HU","IM","IS","IT","JE","LI","LT","LU","LV","MC","MD","ME",
+    "MK","MT","NL","NO","PL","PT","RO","RS","SE","SI","SJ","SK","SM","UA","VA","XK",
+  ],
+
+  // Every country Stripe will accept a shipping address for (besides Ireland).
+  // Remove any country you don't want to ship to. Countries that aren't in
+  // europeCountries above are in the "Rest of world" zone.
   worldwideCountries: [
     "AD","AE","AF","AG","AI","AL","AM","AO","AR","AT","AU","AW","AX","AZ",
     "BA","BB","BD","BE","BF","BG","BH","BI","BJ","BL","BM","BN","BO","BQ","BR","BS","BT","BW","BY","BZ",
@@ -93,9 +107,22 @@ export function formatMoney(amount) {
   return STORE.currencySymbol + Number(amount).toFixed(2);
 }
 
-// Returns the shipping fee (in euro) for a subtotal and region ("IE" | "WORLD").
+// Turns whatever the browser sent into a known zone ("IE", "EUROPE" or "WORLD").
+export function normalizeRegion(region) {
+  return Object.hasOwn(STORE.shipping, region) ? region : "IE";
+}
+
+// Countries checkout accepts for a zone.
+export function countriesFor(region) {
+  if (region === "IE") return ["IE"];
+  const europe = STORE.worldwideCountries.filter((c) => STORE.europeCountries.includes(c));
+  if (region === "EUROPE") return europe;
+  return STORE.worldwideCountries.filter((c) => c !== "IE" && !europe.includes(c));
+}
+
+// Returns the shipping fee (in euro) for a subtotal and zone.
 export function shippingFor(subtotal, region) {
-  const rule = STORE.shipping[region] || STORE.shipping.WORLD;
+  const rule = STORE.shipping[normalizeRegion(region)];
   if (subtotal <= 0) return 0;
   return subtotal >= rule.freeOver ? 0 : rule.fee;
 }

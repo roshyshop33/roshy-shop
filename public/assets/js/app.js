@@ -1,4 +1,4 @@
-import { STORE, findProduct, formatMoney, shippingFor } from "./store-config.js";
+import { STORE, findProduct, formatMoney, shippingFor, normalizeRegion } from "./store-config.js";
 
 // ---------------- Storage (fails safely in private mode) ----------------
 const CART_KEY = "roshy_cart_v1";
@@ -13,7 +13,7 @@ const store = {
 };
 
 let cart = sanitize(store.get(CART_KEY, []));
-let region = store.get(REGION_KEY, "IE") === "WORLD" ? "WORLD" : "IE";
+let region = normalizeRegion(store.get(REGION_KEY, "IE"));
 
 function sanitize(lines) {
   if (!Array.isArray(lines)) return [];
@@ -90,6 +90,8 @@ function hydratePrices() {
   $$("[data-free-world]").forEach((el) => (el.textContent = formatMoney(STORE.shipping.WORLD.freeOver).replace(".00", "")));
   $$("[data-fee-ie]").forEach((el) => (el.textContent = formatMoney(STORE.shipping.IE.fee)));
   $$("[data-fee-world]").forEach((el) => (el.textContent = formatMoney(STORE.shipping.WORLD.fee)));
+  $$("[data-free-europe]").forEach((el) => (el.textContent = formatMoney(STORE.shipping.EUROPE.freeOver).replace(".00", "")));
+  $$("[data-fee-europe]").forEach((el) => (el.textContent = formatMoney(STORE.shipping.EUROPE.fee)));
 }
 
 // ---------------- Cart drawer ----------------
@@ -149,7 +151,7 @@ function renderCart() {
   const rule = STORE.shipping[region];
   const remaining = Math.max(0, rule.freeOver - sub);
   $("#free-ship").innerHTML = remaining > 0
-    ? `Add <strong>${formatMoney(remaining)}</strong> more for free shipping to ${region === "IE" ? "Ireland" : "your country"}.<div class="progress"><span style="width:${Math.min(100, (sub / rule.freeOver) * 100)}%"></span></div>`
+    ? `Add <strong>${formatMoney(remaining)}</strong> more for free shipping to ${region === "WORLD" ? "your country" : rule.label}.<div class="progress"><span style="width:${Math.min(100, (sub / rule.freeOver) * 100)}%"></span></div>`
     : `You've unlocked <strong>free shipping</strong>.<div class="progress"><span style="width:100%"></span></div>`;
   $("#t-sub").textContent = formatMoney(sub);
   $("#t-ship").textContent = ship === 0 ? "Free" : formatMoney(ship);
@@ -192,7 +194,7 @@ function bindCart() {
   });
   document.addEventListener("change", (e) => {
     if (e.target.dataset.qty) setQty(e.target.dataset.qty, Math.max(0, Math.floor(Number(e.target.value)) || 0));
-    if (e.target.name === "region") { region = e.target.value === "WORLD" ? "WORLD" : "IE"; store.set(REGION_KEY, region); renderCart(); }
+    if (e.target.name === "region") { region = normalizeRegion(e.target.value); store.set(REGION_KEY, region); renderCart(); }
   });
   overlay()?.addEventListener("click", closeCart);
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && drawer()?.classList.contains("open")) closeCart(); });

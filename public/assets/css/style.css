@@ -248,8 +248,8 @@ input:focus, textarea:focus, select:focus { outline: none; border-color: var(--g
 .ship-to { display: grid; gap: 8px; margin: 4px 0 14px; }
 .ship-to legend { font-size: .85rem; color: var(--ink-soft); margin-bottom: 6px; padding: 0; }
 .ship-to fieldset { border: 0; padding: 0; margin: 0; }
-.seg { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--bg); }
-.seg label { display: block; text-align: center; padding: 8px; border-radius: 999px; cursor: pointer; font-size: .85rem; color: var(--ink-soft); }
+.seg { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--bg); }
+.seg label { display: block; text-align: center; padding: 8px 4px; border-radius: 999px; cursor: pointer; font-size: .85rem; color: var(--ink-soft); }
 .seg input { position: absolute; opacity: 0; pointer-events: none; }
 .seg input:checked + span { color: #fff; }
 .seg label:has(input:checked) { background: var(--ink); color: #fff; }
