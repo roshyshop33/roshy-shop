@@ -1,4 +1,4 @@
-import { STORE, findProduct, formatMoney, shippingFor, registeredFor, normalizeRegion, activeSale, priceOf, wasPriceOf } from "./store-config.js";
+import { STORE, findProduct, formatMoney, shippingFor, registeredFor, normalizeRegion, activeSale, priceOf, wasPriceOf } from "./store-config.js?v=20261126b";
 
 // ---------------- Storage (fails safely in private mode) ----------------
 const CART_KEY = "roshy_cart_v1";
@@ -286,8 +286,8 @@ function bindMenu() {
 }
 
 // ---------------- Sale ribbon, corner ribbons and countdown ----------------
-const ICON_TAG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8Z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>`;
-const ICON_SPARKLE = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8L12 2Z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15Z" opacity=".7"/></svg>`;
+const ICON_TAG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8Z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>`;
+const ICON_SPARKLE = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8L12 2Z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15Z" opacity=".7"/></svg>`;
 
 function countdown(ends) {
   const ms = Math.max(0, new Date(ends) - new Date());
