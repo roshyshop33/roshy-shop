@@ -146,7 +146,7 @@ p { margin: 0 0 1em; }
 .product { display: grid; grid-template-columns: 1.1fr 1fr; gap: 56px; padding: 24px 0 72px; align-items: start; }
 .gallery-main { border-radius: var(--radius); overflow: hidden; background: var(--surface); }
 .gallery-main img { width: 100%; aspect-ratio: 1; object-fit: cover; }
-.thumbs { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 12px; }
+.thumbs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-top: 12px; }
 .thumbs button { border: 1px solid var(--line); background: none; padding: 0; border-radius: 10px; overflow: hidden; opacity: .65; }
 .thumbs button[aria-current="true"] { opacity: 1; border-color: var(--ink); }
 .thumbs img { aspect-ratio: 1; object-fit: cover; width: 100%; }
