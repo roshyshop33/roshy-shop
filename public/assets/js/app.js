@@ -1,4 +1,4 @@
-import { STORE, findProduct, formatMoney, shippingFor, normalizeRegion } from "./store-config.js";
+import { STORE, findProduct, formatMoney, shippingFor, registeredFor, normalizeRegion } from "./store-config.js";
 
 // ---------------- Storage (fails safely in private mode) ----------------
 const CART_KEY = "roshy_cart_v1";
@@ -153,6 +153,8 @@ function renderCart() {
   $("#free-ship").innerHTML = remaining > 0
     ? `Add <strong>${formatMoney(remaining)}</strong> more for free shipping to ${region === "WORLD" ? "your country" : rule.label}.<div class="progress"><span style="width:${Math.min(100, (sub / rule.freeOver) * 100)}%"></span></div>`
     : `You've unlocked <strong>free shipping</strong>.<div class="progress"><span style="width:100%"></span></div>`;
+  const registered = registeredFor(sub, region);
+  if (registered !== null) $("#free-ship").innerHTML += `<div style="margin-top:8px">Want tracking? Choose registered post at checkout (${formatMoney(registered)}).</div>`;
   $("#t-sub").textContent = formatMoney(sub);
   $("#t-ship").textContent = ship === 0 ? "Free" : formatMoney(ship);
   $("#t-total").textContent = formatMoney(sub + ship);

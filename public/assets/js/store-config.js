@@ -22,9 +22,12 @@ export const STORE = {
   shipping: {
     IE: {
       label: "Ireland",
-      checkoutName: "Standard delivery (Ireland)",
+      checkoutName: "Standard post (Ireland)",
       fee: 3.8,
       freeOver: 30,
+      // Optional upgrade offered at checkout: costs the standard fee plus
+      // this amount (so €10.30, or €6.50 when standard shipping is free).
+      registered: { checkoutName: "Registered post with tracking (Ireland)", extra: 6.5 },
     },
     EUROPE: {
       label: "Europe & UK",
@@ -125,4 +128,11 @@ export function shippingFor(subtotal, region) {
   const rule = STORE.shipping[normalizeRegion(region)];
   if (subtotal <= 0) return 0;
   return subtotal >= rule.freeOver ? 0 : rule.fee;
+}
+
+// Returns the registered post fee (in euro), or null if the zone doesn't offer it.
+export function registeredFor(subtotal, region) {
+  const rule = STORE.shipping[normalizeRegion(region)];
+  if (!rule.registered || subtotal <= 0) return null;
+  return shippingFor(subtotal, region) + rule.registered.extra;
 }
