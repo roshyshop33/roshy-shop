@@ -78,7 +78,7 @@ export const STORE = {
   sale: {
     name: "Black Friday",
     percentOff: 15,
-    starts: "2026-11-27T00:00:00Z",
+    starts: "2026-11-26T16:00:00Z",
     ends: "2026-12-01T00:00:00Z",
   },
 
