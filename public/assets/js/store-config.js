@@ -100,6 +100,7 @@ export const STORE = {
       // Photos live in /public/images (square photos look best).
       images: [
         "/images/product-1.jpg",
+        "/images/product-7.jpg",
         "/images/product-2.jpg",
         "/images/product-3.jpg",
         "/images/product-4.jpg",
