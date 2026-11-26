@@ -23,11 +23,11 @@ export const STORE = {
     IE: {
       label: "Ireland",
       checkoutName: "Standard post (Ireland)",
-      fee: 3.8,
+      fee: 3.5,
       freeOver: 30,
       // Optional upgrade offered at checkout: costs the standard fee plus
-      // this amount (so €10.30, or €6.50 when standard shipping is free).
-      registered: { checkoutName: "Registered post with tracking (Ireland)", extra: 6.5 },
+      // this amount (so €10.50, or €7.00 when standard shipping is free).
+      registered: { checkoutName: "Registered post with tracking (Ireland)", extra: 7 },
     },
     EUROPE: {
       label: "Europe & UK",
