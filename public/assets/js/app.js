@@ -1,4 +1,4 @@
-import { STORE, findProduct, formatMoney, shippingFor, registeredFor, normalizeRegion } from "./store-config.js";
+import { STORE, findProduct, formatMoney, shippingFor, registeredFor, normalizeRegion, activeSale, priceOf, wasPriceOf } from "./store-config.js";
 
 // ---------------- Storage (fails safely in private mode) ----------------
 const CART_KEY = "roshy_cart_v1";
@@ -46,7 +46,7 @@ function setQty(id, qty) {
 }
 
 function subtotal() {
-  return cart.reduce((sum, l) => sum + findProduct(l.id).price * l.qty, 0);
+  return cart.reduce((sum, l) => sum + priceOf(findProduct(l.id)) * l.qty, 0);
 }
 
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -68,17 +68,20 @@ function hydratePrices() {
     const p = findProduct(el.dataset.product);
     if (!p) return;
     const field = el.dataset.field;
-    if (field === "price") el.textContent = formatMoney(p.price);
+    const was = wasPriceOf(p);
+    if (field === "price") el.textContent = formatMoney(priceOf(p));
     if (field === "compare") {
-      const show = p.compareAtPrice && p.compareAtPrice > p.price;
-      el.textContent = show ? formatMoney(p.compareAtPrice) : "";
-      el.hidden = !show;
+      el.textContent = was ? formatMoney(was) : "";
+      el.hidden = !was;
     }
     if (field === "badge") {
+      const sale = activeSale();
       if (!p.available) { el.textContent = "Sold out"; el.className = "badge badge-muted"; el.hidden = false; }
-      else if (p.compareAtPrice && p.compareAtPrice > p.price) {
-        const pct = Math.round((1 - p.price / p.compareAtPrice) * 100);
-        el.textContent = `Save ${pct}%`; el.hidden = false;
+      else if (was) {
+        const pct = Math.round((1 - priceOf(p) / was) * 100);
+        el.textContent = sale && p.salePrice ? `${sale.name} −${pct}%` : `Save ${pct}%`;
+        el.classList.toggle("badge-sale", Boolean(sale && p.salePrice));
+        el.hidden = false;
       } else el.hidden = true;
     }
   });
@@ -132,7 +135,7 @@ function renderCart() {
       <img src="${p.images[0]}" alt="" width="76" height="76">
       <div>
         <div class="name">${escapeHtml(p.name)}</div>
-        <div class="unit">${formatMoney(p.price)}</div>
+        <div class="unit">${formatMoney(priceOf(p))}</div>
         <div class="qty" style="margin-top:6px">
           <button type="button" data-dec="${p.id}" aria-label="Decrease quantity">−</button>
           <input type="number" min="0" max="${p.maxPerOrder}" value="${l.qty}" data-qty="${p.id}" aria-label="Quantity">
@@ -140,7 +143,7 @@ function renderCart() {
         </div>
       </div>
       <div style="text-align:right">
-        <div>${formatMoney(p.price * l.qty)}</div>
+        <div>${formatMoney(priceOf(p) * l.qty)}</div>
         <button type="button" class="link-btn" data-remove="${p.id}">Remove</button>
       </div>
     </div>`;
@@ -282,6 +285,42 @@ function bindMenu() {
   });
 }
 
+// ---------------- Sale ribbon, corner ribbons and countdown ----------------
+const ICON_TAG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8Z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>`;
+const ICON_SPARKLE = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8L12 2Z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15Z" opacity=".7"/></svg>`;
+
+function countdown(ends) {
+  const ms = Math.max(0, new Date(ends) - new Date());
+  const d = Math.floor(ms / 864e5), h = Math.floor(ms / 36e5) % 24, m = Math.floor(ms / 6e4) % 60;
+  return d > 0 ? `${d}d ${String(h).padStart(2, "0")}h ${String(m).padStart(2, "0")}m` : `${h}h ${String(m).padStart(2, "0")}m`;
+}
+
+function renderSale() {
+  const sale = activeSale();
+  if (!sale) return;
+  document.documentElement.classList.add("on-sale");
+  const bar = document.createElement("a");
+  bar.className = "sale-ribbon";
+  bar.href = "/products/magnetic-lashes";
+  bar.innerHTML = `<span class="sale-icon">${ICON_TAG}</span>
+    <span class="sale-text"><strong>${sale.name}</strong><span class="sale-dot">✦</span>${sale.percentOff}% off all lashes</span>
+    <span class="sale-icon">${ICON_SPARKLE}</span>
+    <span class="sale-timer">Ends in <span data-countdown>${countdown(sale.ends)}</span></span>`;
+  document.body.prepend(bar);
+  setInterval(() => {
+    if (!activeSale()) return location.reload();
+    $$("[data-countdown]").forEach((el) => (el.textContent = countdown(sale.ends)));
+  }, 30000);
+  $$(".gallery-main, .spotlight > a").forEach((box) => {
+    const r = document.createElement("span");
+    r.className = "corner-ribbon";
+    r.innerHTML = `<span>${sale.name}<strong>−${sale.percentOff}%</strong></span>`;
+    box.classList.add("has-ribbon");
+    box.append(r);
+  });
+}
+
+renderSale();
 hydratePrices();
 bindMenu();
 bindCart();

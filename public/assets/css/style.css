@@ -279,3 +279,26 @@ mark.todo { background: #fff1b8; color: #6b4e00; padding: 0 4px; border-radius: 
 .looks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
 .looks img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: var(--radius); }
 @media (max-width: 860px) { .looks { grid-template-columns: repeat(2, 1fr); } }
+
+/* Sale: top ribbon, corner ribbons, badge */
+.sale-ribbon { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px 14px; padding: 11px 16px; text-decoration: none; color: #f6e7c1; text-align: center;
+  background: linear-gradient(100deg, #0d0b0a 0%, #1f1a15 40%, #3a2c14 50%, #1f1a15 60%, #0d0b0a 100%); background-size: 250% 100%; animation: sale-shine 6s linear infinite;
+  border-bottom: 1px solid #5c4521; font-size: .86rem; letter-spacing: .14em; text-transform: uppercase; }
+.sale-ribbon:hover { color: #fff; }
+.sale-text strong { font-family: var(--serif); font-size: 1.15rem; letter-spacing: .12em; font-weight: 600;
+  background: linear-gradient(90deg, #c9a253, #f3dc9c, #c9a253); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.sale-dot { color: var(--gold); margin: 0 10px; }
+.sale-icon { display: inline-flex; color: var(--gold); }
+.sale-icon svg { width: 18px; height: 18px; }
+.sale-timer { font-size: .74rem; letter-spacing: .12em; padding: 3px 10px; border: 1px solid #5c4521; border-radius: 999px; color: #e9d7a9; }
+@keyframes sale-shine { from { background-position: 100% 0; } to { background-position: -150% 0; } }
+@media (prefers-reduced-motion: reduce) { .sale-ribbon { animation: none; } }
+@media (max-width: 560px) { .sale-ribbon { font-size: .74rem; letter-spacing: .1em; } .sale-icon { display: none; } .sale-dot { margin: 0 6px; } }
+.has-ribbon { position: relative; overflow: hidden; }
+.corner-ribbon { position: absolute; top: 0; right: 0; width: 150px; height: 150px; overflow: hidden; pointer-events: none; z-index: 2; }
+.corner-ribbon > span { position: absolute; top: 30px; right: -46px; width: 200px; transform: rotate(45deg); text-align: center; padding: 6px 0 7px;
+  background: linear-gradient(180deg, #1c1814, #0d0b0a); color: #f3dc9c; font-size: .62rem; letter-spacing: .18em; text-transform: uppercase;
+  box-shadow: 0 4px 12px rgba(0,0,0,.25); border-top: 1px solid var(--gold); border-bottom: 1px solid var(--gold); line-height: 1.2; }
+.corner-ribbon strong { display: block; font-family: var(--serif); font-size: 1.15rem; letter-spacing: .06em; font-weight: 600; }
+.badge-sale { background: #0d0b0a; color: #f3dc9c; border: 1px solid var(--gold); }
+.on-sale .price { color: var(--sale); }

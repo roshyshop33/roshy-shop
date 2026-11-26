@@ -70,6 +70,18 @@ export const STORE = {
     "UA","UG","US","UY","UZ","VA","VC","VE","VG","VN","VU","WF","WS","XK","YE","YT","ZA","ZM","ZW",
   ],
 
+  // ---- Sale ----------------------------------------------------------
+  // Between starts and ends, products with a salePrice sell at that price,
+  // with their normal price crossed out (EU rules: the "was" price must be
+  // the lowest price of the last 30 days). Times are UTC (= Irish time in winter).
+  // Set sale to null when there is no sale.
+  sale: {
+    name: "Black Friday",
+    percentOff: 15,
+    starts: "2026-11-27T00:00:00Z",
+    ends: "2026-12-01T00:00:00Z",
+  },
+
   // ---- Products ------------------------------------------------------
   // Prices are in euro. compareAtPrice is the crossed-out "was" price
   // (set it to null to hide it). Set available to false to show "Sold out".
@@ -82,6 +94,7 @@ export const STORE = {
       url: "/products/magnetic-lashes",
       price: 26.5,
       compareAtPrice: 28.5,
+      salePrice: 22.5,        // used only while the sale above is running
       available: true,
       maxPerOrder: 10,
       // Photos live in /public/images (square photos look best).
@@ -108,6 +121,24 @@ export function toCents(amount) {
 
 export function formatMoney(amount) {
   return STORE.currencySymbol + Number(amount).toFixed(2);
+}
+
+// Returns the running sale, or null.
+export function activeSale(now = new Date()) {
+  const s = STORE.sale;
+  if (!s) return null;
+  return now >= new Date(s.starts) && now < new Date(s.ends) ? s : null;
+}
+
+// The price a product sells at right now.
+export function priceOf(p, now = new Date()) {
+  return activeSale(now) && p.salePrice ? p.salePrice : p.price;
+}
+
+// The crossed-out "was" price right now, or null.
+export function wasPriceOf(p, now = new Date()) {
+  const was = activeSale(now) && p.salePrice ? p.price : p.compareAtPrice;
+  return was && was > priceOf(p, now) ? was : null;
 }
 
 // Turns whatever the browser sent into a known zone ("IE", "EUROPE" or "WORLD").
