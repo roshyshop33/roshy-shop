@@ -19,10 +19,11 @@
     <label>Carrier 物流公司
       <select name="carrier">
         <option>YunExpress</option><option>4PX</option><option>Yanwen</option><option>Cainiao</option>
-        <option>China Post</option><option>EMS</option><option>DHL</option><option>An Post</option><option>Other</option>
+        <option>China Post</option><option>EMS</option><option>DHL</option>
+        <option>An Post Registered</option><option>An Post Standard (no tracking)</option><option>Other</option>
       </select>
     </label>
-    <label>Tracking number 物流单号<input type="text" name="number" required spellcheck="false"></label>
+    <label id="number-field">Tracking number 物流单号<input type="text" name="number" required spellcheck="false"></label>
     <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" name="resend" value="1"> Send again if already shipped 已发货也重新发送</label>
     <button class="btn" type="submit">Send tracking 发送物流信息</button>
     <p class="form-status" aria-live="polite"></p>
@@ -30,6 +31,13 @@
 </main>
 <script>
 const form = document.getElementById("ship-form");
+// Standard post has no tracking number, so the field is hidden for it.
+const syncNumber = () => {
+  const untracked = form.carrier.value === "An Post Standard (no tracking)";
+  document.getElementById("number-field").style.display = untracked ? "none" : "";
+  form.number.required = !untracked;
+};
+form.carrier.addEventListener("change", syncNumber);
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const status = form.querySelector(".form-status");
